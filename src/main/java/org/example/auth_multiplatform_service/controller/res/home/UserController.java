@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    @PreAuthorize(value = "hasRole('USER')")
+    @PreAuthorize(value = "hasAuthority('USER')")
     ResponseEntity<List<UserEntity>> getAllUser() {
         return ResponseEntity.ok(userService.findAllUsers());
     }

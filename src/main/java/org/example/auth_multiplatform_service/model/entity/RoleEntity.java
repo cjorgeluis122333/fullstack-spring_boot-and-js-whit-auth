@@ -1,7 +1,6 @@
 package org.example.auth_multiplatform_service.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "Role")

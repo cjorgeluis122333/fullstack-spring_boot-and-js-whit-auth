@@ -32,12 +32,14 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    BCryptPasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
-   public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -47,8 +49,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/register")
                         .permitAll()
                         .anyRequest()
-                        .authenticated()
-                )
+                        .authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationManager()))

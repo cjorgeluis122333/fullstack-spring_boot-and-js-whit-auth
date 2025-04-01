@@ -32,8 +32,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         String header = request.getHeader(HEADER_AUTHORIZATION);
 
@@ -44,20 +43,29 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         String token = header.replace(PREFIX_TOKEN, "");
 
         try {
-            Claims claims = Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token).getPayload();
+            Claims claims = Jwts.parser()
+                    .verifyWith(SECRET_KEY)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
             String usename = claims.getSubject();
-            // String usename2 = (String) claims.get("username");
             Object authoritiesClaims = claims.get("authorities");
 
-            Collection<? extends GrantedAuthority> authorities = Arrays.asList(
-                    new ObjectMapper()
-                .addMixIn(SimpleGrantedAuthority.class, 
-                                    SimpleGrantedAuthorityJsonCreator.class)
-                .readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class)
-                );
+            Collection<? extends GrantedAuthority> authorities =
+                    Arrays.asList(new ObjectMapper()
+                            .addMixIn(
+                                    SimpleGrantedAuthority.class,
+                                    SimpleGrantedAuthorityJsonCreator.class
+                            ).readValue(
+                                    authoritiesClaims.toString().getBytes(),
+                                    SimpleGrantedAuthority[].class)
+                    );
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(usename, null, authorities);
-            SecurityContextHolder .getContext().setAuthentication(authenticationToken);
+            SecurityContextHolder
+                    .getContext()
+                    .setAuthentication(authenticationToken);
             chain.doFilter(request, response);
         } catch (JwtException e) {
             Map<String, String> body = new HashMap<>();
